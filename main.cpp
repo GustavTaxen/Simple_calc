@@ -33,8 +33,9 @@ int findOp(string op)
 		return 2;
 	if (op == "multiply" || op == "MULTIPLY")
 		return 3;
-	if (op == "print" || op == "PRINT")
-		return 4;
+
+	if (op == "quit" || op == "QUIT")
+		return 5;
 }
 
 void add(string register_name, int value)
@@ -81,6 +82,16 @@ void mult()
 }
 
 
+void print_output()
+{
+	cout << "\n\nOutput: " << endl;
+
+	for (size_t i = 0; i < output.size(); i++)
+	{
+		cout << output.at(i) << endl;
+	}
+}
+
 
 int main(int argc, char** argv)
 {
@@ -110,6 +121,9 @@ int main(int argc, char** argv)
 			continue;
 		}
 
+		if (Register == "quit" || Register == "QUIT")
+			break;
+
 		switch (findOp(Operation))
 		{
 			// ADD
@@ -131,6 +145,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	print_output();
 
 	return 0;
 }
