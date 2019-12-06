@@ -33,19 +33,21 @@ int findOp(string op)
 		return 2;
 	if (op == "multiply" || op == "MULTIPLY")
 		return 3;
-
-	if (op == "quit" || op == "QUIT")
-		return 5;
 }
 
-void add(string register_name, int value)
+void math_operation(string register_name, int value, char operation)
 {
 	for (size_t i = 0; i < registers_vector.size(); i++)
 	{
 		if (register_name == registers_vector.at(i).name)
 		{
 			// If register already in vector
-			registers_vector.at(i).val += value;
+			if (operation == '+')
+				registers_vector.at(i).val += value;
+			else if (operation == '-')
+				registers_vector.at(i).val -= value;
+			else if (operation == '*')
+				registers_vector.at(i).val *= value;
 			return;
 		}
 	}
@@ -57,29 +59,6 @@ void add(string register_name, int value)
 	registers_vector.push_back(temp);
 }
 
-void sub(string register_name, int value)
-{
-	for (size_t i = 0; i < registers_vector.size(); i++)
-	{
-		if (register_name == registers_vector.at(i).name)
-		{
-			// If register already in vector
-			registers_vector.at(i).val -= value;
-			return;
-		}
-	}
-
-	// Put new register in vector (if not in vector)
-	reg temp;
-	temp.val = value;
-	temp.name = register_name;
-	registers_vector.push_back(temp);
-}
-
-void mult()
-{
-
-}
 
 
 void print_output()
@@ -128,16 +107,17 @@ int main(int argc, char** argv)
 		{
 			// ADD
 		case 1:
-			add(Register, stoi(Value));
+			math_operation(Register, stoi(Value), '+');
 			break;
 
 			// SUB
 		case 2:
-			sub(Register, stoi(Value));
+			math_operation(Register, stoi(Value), '-');
 			break;
 
 			// MULT
 		case 3:
+			math_operation(Register, stoi(Value), '*');
 			break;
 
 		default:
