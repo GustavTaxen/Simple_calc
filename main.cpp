@@ -21,7 +21,7 @@ struct reg {
 	string name;
 };
 
-vector<reg> registers_vector = {};
+vector<reg> registers_vector;
 vector<int> output;
 
 
@@ -72,13 +72,34 @@ void print_output()
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
 	string Line;
+	bool file_as_input = false;
+	ifstream input_file;
+
+	if (argc > 1)
+	{
+		//cout << "vi har en fil!\n"; // DEBUG
+		file_as_input = true;
+		input_file.open(argv[1], ifstream::in);
+	}
 
 	while (true)
 	{
-		getline(cin, Line);
+		if (!file_as_input)
+			getline(cin, Line);
+		else
+		{
+			if (input_file.is_open())
+				getline(input_file, Line);
+			else
+			{
+				cout << "Could not find file!\n";
+				return -1;
+			}
+		}
+			
 
 		stringstream ss;
 		ss << Line;
@@ -102,6 +123,8 @@ int main(int argc, char** argv)
 
 		if (Register == "quit" || Register == "QUIT")
 			break;
+
+		// cout << Register << Operation << Value; // DEBUG
 
 		switch (findOp(Operation))
 		{
