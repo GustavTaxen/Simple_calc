@@ -16,16 +16,19 @@
 
 using namespace std;
 
+// Register containing:
+// value (int) and name (string)
 struct reg {
 	int val;
 	string name;
+	vector<string> value_memory;
 };
 
 vector<reg> registers_vector;
 vector<int> output;
 
 
-int findOp(string op)
+int findOp(const string op)
 {
 	if (op == "add" || op == "ADD")
 		return 1;
@@ -69,6 +72,43 @@ void print_output()
 	{
 		cout << output.at(i) << endl;
 	}
+}
+
+bool is_number(const string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && std::isdigit(*it))
+		++it;
+	return !s.empty() && it == s.end();
+}
+
+// Checks if the value is a register (string)
+bool check_if_value(const string value_register, const string Operation)
+{
+	if (!is_number(value_register))
+	{
+		stringstream tmp;
+		tmp << Operation << ' ' << value_register;
+
+		for (size_t i = 0; i < registers_vector.size(); i++)
+		{
+			if (value_register == registers_vector.at(i).name)
+			{
+				// Add this value to the registers memory
+				registers_vector.at(i).value_memory.push_back(tmp.str());
+				cout << "Found such value!\n"; // DEBUG
+				return true;
+			}
+		}
+		// If the value-register doesn't already exist, create one
+		reg temp;
+		temp.val = 0;
+		temp.name = value_register;
+		registers_vector.push_back(temp);
+		cout << "Added a new register as value in vector!\n"; // DEBUG
+		return true;
+	}
+	return false;
 }
 
 
@@ -123,6 +163,11 @@ int main(int argc, char* argv[])
 
 		if (Register == "quit" || Register == "QUIT")
 			break;
+
+		// If its not a number, reference to the register.
+		if (check_if_value(Value, Operation))
+			continue;
+
 
 		// cout << Register << Operation << Value; // DEBUG
 
