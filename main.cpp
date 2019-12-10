@@ -1,11 +1,6 @@
 /*
 	Simple Calculator
-	by Fadi. 
-
-	Syntax:
-		<register> <operation> <value>
-		print <register>
-		quit
+	by Fadi.
 */
 
 #include <iostream>
@@ -90,7 +85,6 @@ bool check_if_value
 	{
 		stringstream tmp;
 		tmp << Operation << ' ' << value_register;
-		cout << tmp.str() << ' '; // DEBUG
 
 		for (size_t i = 0; i < registers_vector.size(); i++)
 		{
@@ -98,7 +92,6 @@ bool check_if_value
 			{
 				// Add this value to the registers memory
 				registers_vector.at(i).value_memory.push_back(tmp.str());
-				cout << "Found such value!\n"; // DEBUG
 				return true;
 			}
 		}
@@ -108,7 +101,6 @@ bool check_if_value
 		temp.name = register_name;
 		temp.value_memory.push_back(tmp.str());
 		registers_vector.push_back(temp);
-		cout << temp.name << " Added a new register as value in vector!\n"; // DEBUG
 		return true;
 	}
 	return false;
@@ -151,7 +143,6 @@ int find_value(const string value)
 		if (value == registers_vector.at(i).name &&
 			registers_vector.at(i).value_memory.size() == 0)
 		{
-			cout << "--Return value: " << registers_vector.at(i).val << endl; // DEBUG
 			return registers_vector.at(i).val;
 		}
 		
@@ -173,7 +164,6 @@ int find_value(const string value)
 				else if (operation == "multiply")
 					temp_output *= operand;
 			}
-			cout << registers_vector.at(i).name << ' ' << registers_vector.at(i).val << " \n"; // DEBUG
 			return temp_output;
 		}
 	}
@@ -189,7 +179,6 @@ void print(const string register_name)
 		{
 			// If register already in register-vector add value to output
 			output.push_back(registers_vector.at(i).val);
-			cout << registers_vector.at(i).val << " \n"; //DEBUG
 			return;
 		}
 		
@@ -203,13 +192,8 @@ void print(const string register_name)
 			{
 				ss.str(registers_vector.at(i).value_memory.at(j));
 				string line = registers_vector.at(i).value_memory.at(j);
-				cout << "vector DEBUG: " << registers_vector.at(i).value_memory.at(j) << "\n";
-				//ss >> operation;
-				//ss >> value;
 				operation = line.substr(0, line.find(' '));
 				value = line.substr(line.find(' ')+1, line.size());
-				cout << "ss DEBUG: " << ss.str() << '\n';
-				cout << "variables DEBUG: " << register_name << ' ' << operation << ' ' << value  << '\n';
 
 
 				int operand = find_value(value);
@@ -219,16 +203,13 @@ void print(const string register_name)
 					temp_output -= operand;
 				else if (operation == "multiply")
 					temp_output *= operand;
-				cout << "  DEBUG: " << register_name << " has " << registers_vector.at(i).value_memory.at(j) << '\n';
-				cout << "DEBUG: " << register_name << ' ' << operation << ' ' << value << ' ' << operand <<  '\n';
+
 				operation.clear();
 				value.clear();
-				cout << "\n\n"; // Debug
 			}
 			output.push_back(temp_output);
 			return;
 		}
-		//cout << registers_vector.at(i).name << ' ' << registers_vector.at(i).val <<" \n"; // DEBUG
 	}
 }
 
@@ -242,7 +223,6 @@ int main(int argc, char* argv[])
 
 	if (argc > 1)
 	{
-		//cout << "vi har en fil!\n"; // DEBUG
 		file_as_input = true;
 		input_file.open(argv[1], ifstream::in);
 	}
