@@ -2,8 +2,8 @@
 A small simple calculator by Fadi.
 
 Syntax:
-		<register> <operation> <value>
-		print <register>
+		"register" "operation" "value"
+		print "register"
 		quit
 
 -----------------------------------
@@ -19,7 +19,7 @@ Running with file as input:
 
 ELSE using Visual studio:
   > Build the solution and let it compile
-  > Go to <project-name>/Debug and the exe file should be there.
+  > Go to "project-name"/Debug and the exe file should be there.
 
 
 -----------------------------------
