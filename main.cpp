@@ -19,7 +19,7 @@ using namespace std;
 // Register containing:
 // value (int) and name (string)
 struct reg {
-	int val;
+	int val=0;
 	string name;
 	vector<string> value_memory;
 };
@@ -38,7 +38,7 @@ int findOp(const string op)
 		return 3;
 }
 
-void math_operation(string register_name, int value, char operation)
+void math_operation(const string register_name, const int value, const char operation)
 {
 	for (size_t i = 0; i < registers_vector.size(); i++)
 	{
@@ -83,16 +83,18 @@ bool is_number(const string& s)
 }
 
 // Checks if the value is a register (string)
-bool check_if_value(const string value_register, const string Operation)
+bool check_if_value
+(const string register_name, const string value_register, const string Operation)
 {
 	if (!is_number(value_register))
 	{
 		stringstream tmp;
 		tmp << Operation << ' ' << value_register;
+		cout << tmp.str() << ' '; // DEBUG
 
 		for (size_t i = 0; i < registers_vector.size(); i++)
 		{
-			if (value_register == registers_vector.at(i).name)
+			if (register_name == registers_vector.at(i).name)
 			{
 				// Add this value to the registers memory
 				registers_vector.at(i).value_memory.push_back(tmp.str());
@@ -103,13 +105,133 @@ bool check_if_value(const string value_register, const string Operation)
 		// If the value-register doesn't already exist, create one
 		reg temp;
 		temp.val = 0;
-		temp.name = value_register;
+		temp.name = register_name;
+		temp.value_memory.push_back(tmp.str());
 		registers_vector.push_back(temp);
-		cout << "Added a new register as value in vector!\n"; // DEBUG
+		cout << temp.name << " Added a new register as value in vector!\n"; // DEBUG
 		return true;
 	}
 	return false;
 }
+
+
+
+
+void math_subrutine
+(const string Register, const string Operation, const string Value)
+{
+	switch (findOp(Operation))
+	{
+		// ADD
+	case 1:
+		math_operation(Register, stoi(Value), '+');
+		break;
+
+		// SUB
+	case 2:
+		math_operation(Register, stoi(Value), '-');
+		break;
+
+		// MULT
+	case 3:
+		math_operation(Register, stoi(Value), '*');
+		break;
+
+	default:
+		cout << "Unknown operation!\n";
+	}
+}
+
+
+int find_value(const string value)
+{
+	for (int i = 0; i < registers_vector.size(); i++)
+	{
+		// If no register is linked
+		if (value == registers_vector.at(i).name &&
+			registers_vector.at(i).value_memory.size() == 0)
+		{
+			cout << "--Return value: " << registers_vector.at(i).val << endl; // DEBUG
+			return registers_vector.at(i).val;
+		}
+		
+		
+		if (value == registers_vector.at(i).name)
+		{
+			int temp_output = registers_vector.at(i).val;
+			stringstream ss;
+			string operation, value;
+			for (int j = 0; j < registers_vector.at(i).value_memory.size(); j++)
+			{
+				ss << registers_vector.at(i).value_memory.at(j);
+				ss >> operation >> value;
+				int operand = find_value(value);
+				if (operation == "add")
+					temp_output += operand;
+				else if (operation == "subtract")
+					temp_output -= operand;
+				else if (operation == "multiply")
+					temp_output *= operand;
+			}
+			cout << registers_vector.at(i).name << ' ' << registers_vector.at(i).val << " \n"; // DEBUG
+			return temp_output;
+		}
+	}
+}
+
+void print(const string register_name)
+{
+	for (int i = 0; i < registers_vector.size(); i++)
+	{
+		// If no register is linked
+		if (register_name == registers_vector.at(i).name &&
+			registers_vector.at(i).value_memory.empty())
+		{
+			// If register already in register-vector add value to output
+			output.push_back(registers_vector.at(i).val);
+			cout << registers_vector.at(i).val << " \n"; //DEBUG
+			return;
+		}
+		
+
+		if (register_name == registers_vector.at(i).name)
+		{
+			int temp_output = registers_vector.at(i).val;
+			stringstream ss;
+			string operation, value;
+			for (int j = 0; j < registers_vector.at(i).value_memory.size(); j++)
+			{
+				ss.str(registers_vector.at(i).value_memory.at(j));
+				string line = registers_vector.at(i).value_memory.at(j);
+				cout << "vector DEBUG: " << registers_vector.at(i).value_memory.at(j) << "\n";
+				//ss >> operation;
+				//ss >> value;
+				operation = line.substr(0, line.find(' '));
+				value = line.substr(line.find(' ')+1, line.size());
+				cout << "ss DEBUG: " << ss.str() << '\n';
+				cout << "variables DEBUG: " << register_name << ' ' << operation << ' ' << value  << '\n';
+
+
+				int operand = find_value(value);
+				if (operation == "add")
+					temp_output += operand;
+				else if (operation == "subtract")
+					temp_output -= operand;
+				else if (operation == "multiply")
+					temp_output *= operand;
+				cout << "  DEBUG: " << register_name << " has " << registers_vector.at(i).value_memory.at(j) << '\n';
+				cout << "DEBUG: " << register_name << ' ' << operation << ' ' << value << ' ' << operand <<  '\n';
+				operation.clear();
+				value.clear();
+				cout << "\n\n"; // Debug
+			}
+			output.push_back(temp_output);
+			return;
+		}
+		//cout << registers_vector.at(i).name << ' ' << registers_vector.at(i).val <<" \n"; // DEBUG
+	}
+}
+
 
 
 int main(int argc, char* argv[])
@@ -148,16 +270,8 @@ int main(int argc, char* argv[])
 
 		if (Register == "print" || Register == "PRINT")
 		{
-			for (int i = 0; i < registers_vector.size(); i++)
-			{
-				if (Operation == registers_vector.at(i).name)
-				{
-					// If register already in register-vector add value to output
-					output.push_back(registers_vector.at(i).val);
-					//cout << registers_vector.at(i).val << " \n"; //DEBUG
-					break;
-				}
-			}
+			
+			print(Operation);
 			continue;
 		}
 
@@ -165,32 +279,10 @@ int main(int argc, char* argv[])
 			break;
 
 		// If its not a number, reference to the register.
-		if (check_if_value(Value, Operation))
+		if (check_if_value(Register, Value, Operation))
 			continue;
 
-
-		// cout << Register << Operation << Value; // DEBUG
-
-		switch (findOp(Operation))
-		{
-			// ADD
-		case 1:
-			math_operation(Register, stoi(Value), '+');
-			break;
-
-			// SUB
-		case 2:
-			math_operation(Register, stoi(Value), '-');
-			break;
-
-			// MULT
-		case 3:
-			math_operation(Register, stoi(Value), '*');
-			break;
-
-		default:
-			cout << "Unknown operation!\n";
-		}
+		math_subrutine(Register, Operation, Value);
 	}
 
 	print_output();
